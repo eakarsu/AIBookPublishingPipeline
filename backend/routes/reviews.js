@@ -1,0 +1,72 @@
+const router = require('express').Router();
+const { authenticateToken } = require('../middleware/auth');
+
+// Get all book reviews
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const pool = req.app.locals.pool;
+    const result = await pool.query('SELECT * FROM book_reviews ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get single book review
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const pool = req.app.locals.pool;
+    const result = await pool.query('SELECT * FROM book_reviews WHERE id = $1', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create book review
+router.post('/', authenticateToken, async (req, res) => {
+  try {
+    const pool = req.app.locals.pool;
+    const { book_title, reviewer_name, platform, rating, review_text, review_date, verified_purchase, helpful_votes, sentiment, status, ai_response_suggestion } = req.body;
+    const result = await pool.query(
+      `INSERT INTO book_reviews (book_title, reviewer_name, platform, rating, review_text, review_date, verified_purchase, helpful_votes, sentiment, status, ai_response_suggestion)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [book_title, reviewer_name, platform, rating || 0, review_text, review_date, verified_purchase || false, helpful_votes || 0, sentiment, status || 'Published', ai_response_suggestion || '']
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update book review
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const pool = req.app.locals.pool;
+    const { book_title, reviewer_name, platform, rating, review_text, review_date, verified_purchase, helpful_votes, sentiment, status, ai_response_suggestion } = req.body;
+    const result = await pool.query(
+      `UPDATE book_reviews SET book_title=$1, reviewer_name=$2, platform=$3, rating=$4, review_text=$5, review_date=$6, verified_purchase=$7, helpful_votes=$8, sentiment=$9, status=$10, ai_response_suggestion=$11, updated_at=NOW()
+       WHERE id=$12 RETURNING *`,
+      [book_title, reviewer_name, platform, rating, review_text, review_date, verified_purchase, helpful_votes, sentiment, status, ai_response_suggestion, req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete book review
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const pool = req.app.locals.pool;
+    const result = await pool.query('DELETE FROM book_reviews WHERE id = $1 RETURNING *', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+    res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
