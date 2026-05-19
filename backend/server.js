@@ -94,3 +94,6 @@ app.use('/api/gap-no-e-book-conversion-pipeline-epub-mobi-pdf', require('./route
 app.use('/api/gap-no-print-run-cost-calculator', require('./routes/gap_no_print_run_cost_calculator'));
 app.use('/api/gap-no-bookseller-retailer-crm-module', require('./routes/gap_no_bookseller_retailer_crm_module'));
 app.use('/api/gap-no-direct-ingramspark-kdp-api-client-integrations-', require('./routes/gap_no_direct_ingramspark_kdp_api_client_integrations_'));
+
+// === Custom Views — 4 supplementary publishing features ===
+app.use('/api/custom-views', require('./routes/customViews'));
