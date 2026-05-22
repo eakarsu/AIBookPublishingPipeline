@@ -97,3 +97,4 @@ app.use('/api/gap-no-direct-ingramspark-kdp-api-client-integrations-', require('
 
 // === Custom Views — 4 supplementary publishing features ===
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api/rights-reversion', require('./routes/rightsReversionRisk'));
