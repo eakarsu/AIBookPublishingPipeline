@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book Publishing Pipeline</title><link rel="stylesheet" href="/styles.css"></head>
+<body>
+  <header><div><span class="eyebrow">Editorial operations</span><h1>Book Publishing Pipeline</h1></div><button id="logout" class="secondary" hidden>Sign out</button></header>
+  <main>
+    <section id="login-panel" class="panel login"><h2>Open the publishing workspace</h2><p>Sign in with a backend account. This client stores the session token only for the current browser tab.</p><form id="login-form"><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button>Sign in</button></form></section>
+    <section id="workspace" hidden>
+      <div class="toolbar"><div><h2>Portfolio pipeline</h2><p id="updated">Not loaded</p></div><button id="refresh">Refresh</button></div><div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="metrics" class="metrics"></div>
+      <div class="grid">
+        <article class="panel"><h3>Add manuscript</h3><form id="manuscript-form"><label>Title<input name="title" required maxlength="200"></label><label>Author<input name="author" required></label><div class="form-row"><label>Genre<select name="genre"><option>fiction</option><option>non-fiction</option><option>business</option><option>children</option><option>technology</option><option>history</option></select></label><label>Word count<input name="word_count" type="number" min="1" required></label></div><button>Add to pipeline</button></form></article>
+        <article class="panel"><h3>Upcoming production tasks</h3><div id="tasks" class="list"></div></article>
+      </div>
+      <article class="panel"><h3>Manuscripts</h3><div id="manuscripts" class="table-wrap"></div></article>
+      <div class="grid"><article class="panel"><h3>Print production</h3><div id="production" class="table-wrap"></div></article><article class="panel"><h3>Royalty records</h3><div id="royalties" class="table-wrap"></div></article></div>
+    </section>
+  </main><script src="/api.js"></script><script src="/app.js"></script>
+</body></html>

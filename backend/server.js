@@ -33,8 +33,10 @@ app.use(express.json({ limit: '10mb' }));
 // Make pool available to routes
 app.locals.pool = pool;
 
-// Ensure ai_results table exists at startup (non-fatal if DB is down)
-ensureAIResultsTable(pool).catch(e => console.warn('ai_results init failed:', e.message));
+// Database changes are opt-in; startup is read-only unless explicitly enabled.
+if (process.env.DB_AUTO_MIGRATE === 'true') {
+  ensureAIResultsTable(pool).catch(e => console.warn('ai_results init failed:', e.message));
+}
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
