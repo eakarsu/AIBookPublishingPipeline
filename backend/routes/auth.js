@@ -3,6 +3,19 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('../middleware/auth');
 
+router.get('/demo-credentials', (_req, res) => {
+  if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'false') return res.sendStatus(404);
+  const pairs = [
+    [process.env.PROVISION_ADMIN_EMAIL, process.env.PROVISION_ADMIN_PASSWORD],
+    [process.env.SEED_ADMIN_EMAIL, process.env.SEED_ADMIN_PASSWORD],
+    [process.env.DEMO_EMAIL, process.env.DEMO_PASSWORD],
+    [process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD],
+  ];
+  const credentials = pairs.find(([email, password]) => email && password);
+  if (!credentials) return res.sendStatus(404);
+  res.set('Cache-Control', 'no-store').json({ email: credentials[0], password: credentials[1] });
+});
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
