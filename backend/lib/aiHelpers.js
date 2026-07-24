@@ -4,7 +4,8 @@ const fetch = require('node-fetch');
 const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
 
 async function callOpenRouter(systemPrompt, userPrompt, opts = {}) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const baseUrl = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+  const response = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
