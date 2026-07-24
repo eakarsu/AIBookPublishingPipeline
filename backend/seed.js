@@ -4,6 +4,12 @@ const bcrypt = require('bcryptjs');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+function requireDemoPassword() {
+  const password = process.env.DEMO_PASSWORD || process.env.SEED_DEMO_PASSWORD || process.env.DEMO_SEED_PASSWORD || '';
+  if (password.length < 12 || password.length > 1024) throw new Error('DEMO_PASSWORD must contain 12-1024 characters');
+  return password;
+}
+
 async function seed() {
   const client = await pool.connect();
   try {
@@ -396,7 +402,7 @@ async function seed() {
 
     // Seed user
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash('password123', salt);
+    const hash = await bcrypt.hash(requireDemoPassword(), salt);
     await client.query(
       'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3)',
       ['Admin User', 'admin@bookpublishing.com', hash]
@@ -861,7 +867,7 @@ async function seed() {
     console.log('Tasks seeded (15)');
 
     console.log('\\nSeeding complete! All 15 items per feature (19 features) seeded.');
-    console.log('Login: admin@bookpublishing.com / password123');
+    console.log('Demo login users provisioned from the local environment.');
   } catch (err) {
     console.error('Seed error:', err);
   } finally {
